@@ -1,11 +1,28 @@
-import pandas as pd
 import sqlite3
+import yaml
 
-# Load CSV into pandas DataFrame
-df = pd.read_csv('animal_slaughter_statistics.csv')
+# Load configuration
+with open('config/config.yaml', 'r') as file:
+    config = yaml.safe_load(file)
 
-# Connect to SQLite database (or create it)
-conn = sqlite3.connect('animal_slaughter.db')
+db_uri = config['database']['db_uri']
+db_path = db_uri.split('///')[-1]  # Extract the path to the database file
 
-# Save DataFrame to SQLite database
-df.to_sql('slaughter_stats', conn, if_exists='replace', index=False)
+# Setup database connection
+conn = sqlite3.connect(db_path)
+cursor = conn.cursor()
+
+# Create table
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS slaughter_stats (
+        id INTEGER PRIMARY KEY,
+        date TEXT,
+        animal_type TEXT,
+        quantity INTEGER,
+        year INTEGER
+    )
+''')
+
+# Commit and close connection
+conn.commit()
+conn.close()

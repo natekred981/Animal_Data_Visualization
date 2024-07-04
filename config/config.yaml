@@ -1,0 +1,4 @@
+database:
+  db_uri: "sqlite:///data/processed/animal_slaughter_stats.db"
+file_paths:
+  raw_data: "data/raw/yearly_slaughter_weight.csv"
